@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLANK FBA SCOUT</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo">BFS</div>
+        <div>
+          <h1>BLANK FBA SCOUT</h1>
+          <p class="subtitle">Live FBA Product & Profit Scout</p>
+        </div>
+      </div>
+      <div class="badge-status" id="market-badge">Amazon US</div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="tab-active">Active</button>
+      <button class="tab-btn" data-tab="tab-watchlist">
+        Watchlist <span class="counter" id="watchlist-count">0</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-top100">Top 100</button>
+      <button class="tab-btn" data-tab="tab-settings">Settings</button>
+    </nav>
+
+    <!-- Tab 1: Active Product -->
+    <section class="tab-content active" id="tab-active">
+      <div id="active-product-loading" class="placeholder-card">
+        <div class="spinner"></div>
+        <p>Analyzing current Amazon tab...</p>
+      </div>
+
+      <div id="active-product-none" class="placeholder-card hidden">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <p><strong>No Amazon Product Detected</strong></p>
+        <p class="text-sm">Navigate to any product page on <code>amazon.com</code> to see live BSR, sales estimates, and profit analysis.</p>
+      </div>
+
+      <div id="active-product-card" class="product-view hidden">
+        <div class="product-header">
+          <img id="active-img" src="" alt="Product" class="product-thumb">
+          <div class="product-info">
+            <h3 id="active-title" class="product-title">Product Title</h3>
+            <div class="product-meta">
+              <span id="active-asin" class="badge-tag">ASIN</span>
+              <span id="active-cat" class="badge-tag">Category</span>
+              <span id="active-score" class="badge-tag" style="background:rgba(16,185,129,0.2);color:#34d399;font-weight:700;">Score: 0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-label">Best Sellers Rank</span>
+            <span id="active-bsr" class="stat-num text-amber">#0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Est. Monthly Sales</span>
+            <span id="active-sales" class="stat-num text-green">0 units</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Buy Box Price</span>
+            <span id="active-price" class="stat-num text-white">$0.00</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Est. Revenue /mo</span>
+            <span id="active-revenue" class="stat-num text-green">$0</span>
+          </div>
+        </div>
+
+        <!-- Restrictions Checklist -->
+        <div class="popup-section" style="margin-top: 10px;">
+          <div class="section-title-sm">Can I sell this?</div>
+          <div class="popup-rest-grid">
+            <div class="popup-rest-cell" id="rest-hazmat">
+              <div class="status-dot dot-green"></div>
+              <span>Hazmat</span>
+            </div>
+            <div class="popup-rest-cell" id="rest-eligible">
+              <div class="status-dot dot-green"></div>
+              <span>Eligible</span>
+            </div>
+            <div class="popup-rest-cell" id="rest-dg">
+              <div class="status-dot dot-green"></div>
+              <span>DG</span>
+            </div>
+            <div class="popup-rest-cell" id="rest-ip">
+              <div class="status-dot dot-green"></div>
+              <span>IP Radar</span>
+            </div>
+            <div class="popup-rest-cell" id="rest-bb">
+              <div class="status-dot dot-green"></div>
+              <span>BB Analysis</span>
+            </div>
+            <div class="popup-rest-cell" id="rest-oversize">
+              <div class="status-dot dot-green"></div>
+              <span>Oversize</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-action" style="margin-top: 12px;">
+          <button id="btn-save-current" class="btn btn-primary btn-block">
+            ⭐ Add to Watchlist & Tracker
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Watchlist / Tracker -->
+    <section class="tab-content" id="tab-watchlist">
+      <div class="watchlist-controls">
+        <button id="btn-export-csv" class="btn btn-sm btn-outline">
+          📊 Export CSV
+        </button>
+        <button id="btn-sync-sheets" class="btn btn-sm btn-outline" style="color:#10b981;border-color:rgba(16,185,129,0.4);">
+          ☁️ Sheets Sync
+        </button>
+        <button id="btn-clear-watchlist" class="btn btn-sm btn-danger-outline">
+          Clear All
+        </button>
+      </div>
+
+      <div id="watchlist-empty" class="placeholder-card hidden">
+        <p><strong>Your Watchlist is empty</strong></p>
+        <p class="text-sm">Click "Track Product" on Amazon product pages to monitor them here.</p>
+      </div>
+
+      <div id="watchlist-items" class="watchlist-list"></div>
+    </section>
+
+    <!-- Tab 3: Top 100 Wholesale Directory -->
+    <section class="tab-content" id="tab-top100">
+      <div class="category-pills" id="top100-filters">
+        <button class="cat-pill active" data-cat="All">All</button>
+        <button class="cat-pill" data-cat="Kitchen">Kitchen</button>
+        <button class="cat-pill" data-cat="Beauty">Beauty</button>
+        <button class="cat-pill" data-cat="Toys">Toys</button>
+        <button class="cat-pill" data-cat="Sports">Sports</button>
+        <button class="cat-pill" data-cat="Tools">Tools</button>
+        <button class="cat-pill" data-cat="Pet">Pet</button>
+        <button class="cat-pill" data-cat="Office">Office</button>
+      </div>
+
+      <div id="top100-list" class="top100-list">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- Tab 4: Settings -->
+    <section class="tab-content" id="tab-settings">
+      <!-- Theme Selection -->
+      <div class="settings-group">
+        <label class="setting-label">Color Theme</label>
+        <select id="setting-theme" class="form-input">
+          <option value="amber">Amazon Amber (Classic)</option>
+          <option value="cyber-dark">Cyber Cyan (Neon)</option>
+          <option value="ocean-blue">Ocean Blue (Electric Navy)</option>
+          <option value="emerald">Emerald Green (Profit Mint)</option>
+          <option value="gx-purple">GX Purple (Opera Style)</option>
+          <option value="crimson-red">Crimson Red (Vivid)</option>
+          <option value="sunset-orange">Sunset Coral (Warm)</option>
+          <option value="gold-luxury">Royal Gold (Champagne)</option>
+          <option value="neon-pink">Synthwave Pink (Hot)</option>
+          <option value="midnight-mono">Platinum Silver (Monochrome)</option>
+        </select>
+      </div>
+
+      <!-- Feature Tabs Visibility -->
+      <div class="settings-group">
+        <label class="setting-label">Floating Widget Tabs</label>
+        <div class="checkbox-list">
+          <label class="checkbox-item">
+            <input type="checkbox" id="setting-tab-calc" checked>
+            <span>Profit Calculator</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="setting-tab-rest" checked>
+            <span>Restrictions ("Can I sell this?")</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="setting-tab-comp" checked>
+            <span>Competition & Purchase Qty</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="setting-tab-charts" checked>
+            <span>Charts & Price Averages</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="setting-tab-sourcing" checked>
+            <span>Wholesale & Sourcing Links</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Buy Criteria Presets -->
+      <div class="settings-group">
+        <label class="setting-label">Custom Buy Criteria Presets</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;">
+          <div>
+            <span style="font-size:10px;color:#9ca3af;">Min Profit ($)</span>
+            <input type="number" step="0.5" id="setting-min-profit" class="form-input" value="3.00">
+          </div>
+          <div>
+            <span style="font-size:10px;color:#9ca3af;">Min ROI (%)</span>
+            <input type="number" step="5" id="setting-roi" class="form-input" value="30">
+          </div>
+          <div>
+            <span style="font-size:10px;color:#9ca3af;">Max BSR</span>
+            <input type="number" step="5000" id="setting-max-bsr" class="form-input" value="50000">
+          </div>
+        </div>
+      </div>
+
+      <!-- Fee Defaults -->
+      <div class="settings-group">
+        <label class="setting-label">Default Shipping Rate ($/lb)</label>
+        <input type="number" step="0.05" id="setting-shipping" class="form-input" value="0.40">
+      </div>
+
+      <div class="settings-group">
+        <label class="setting-label">Default Prep Fee ($/unit)</label>
+        <input type="number" step="0.05" id="setting-prep" class="form-input" value="0.20">
+      </div>
+
+      <!-- Google Sheets Webhook -->
+      <div class="settings-group">
+        <label class="setting-label">Google Sheets Webhook URL (Optional)</label>
+        <p class="text-sm text-muted">Paste your Google Apps Script Webhook to sync tracked products to Sheets.</p>
+        <input type="url" id="setting-webhook" class="form-input" placeholder="https://script.google.com/macros/s/.../exec">
+      </div>
+
+      <button id="btn-save-settings" class="btn btn-primary btn-block" style="margin-top: 15px;">
+        Save Preferences
+      </button>
+      <div id="settings-saved-msg" class="toast hidden">Preferences Saved!</div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span>BLANK FBA SCOUT v1.4.0 • Opera GX</span>
+      <span class="live-pulse">● Live Scraper</span>
+    </footer>
+  </div>
+
+  <script src="../shared/themes.js"></script>
+  <script src="../shared/top-wholesale-products.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

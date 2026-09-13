@@ -1,0 +1,945 @@
+/* BLANK FBA SCOUT v1.3.0 - In-Page Overlay Styles with Gauge Fix & Search Scout */
+
+:root {
+  --amz-fba-primary: #ff9900;
+  --amz-fba-primary-hover: #e88b00;
+  --amz-fba-bg-dark: #131921;
+  --amz-fba-bg-card: #1e2634;
+  --amz-fba-bg-input: #0f141d;
+  --amz-fba-border: #2d3848;
+  --amz-fba-text-main: #f3f4f6;
+  --amz-fba-text-muted: #9ca3af;
+  --amz-fba-success: #10b981;
+  --amz-fba-danger: #ef4444;
+  --amz-fba-warning: #f59e0b;
+}
+
+/* Floating Widget Container */
+#amz-fba-overlay-container {
+  position: fixed;
+  top: 75px;
+  right: 20px;
+  z-index: 9999999;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+  color: var(--amz-fba-text-main);
+  text-align: left;
+}
+
+#amz-fba-overlay-container * {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+/* Collapsed Mini Badge */
+.amz-fba-mini-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--amz-fba-bg-card), var(--amz-fba-bg-dark));
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 30px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--amz-fba-primary);
+  cursor: grab;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  user-select: none;
+  touch-action: none;
+}
+
+.amz-fba-mini-badge:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  border-color: var(--amz-fba-primary-hover);
+}
+
+.amz-fba-mini-badge:active,
+.amz-fba-mini-badge.dragging {
+  cursor: grabbing;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75);
+}
+
+.amz-fba-drag-grip {
+  display: inline-flex;
+  align-items: center;
+  color: var(--amz-fba-text-muted);
+  opacity: 0.7;
+  font-size: 13px;
+  line-height: 1;
+  margin-right: -2px;
+  letter-spacing: -2px;
+}
+
+.amz-fba-badge-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: var(--amz-fba-primary);
+  color: #111;
+  font-weight: 900;
+  font-size: 11px;
+  border-radius: 50%;
+}
+
+.amz-fba-badge-metric {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.amz-fba-badge-profit {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.amz-fba-badge-profit.profit-positive {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.amz-fba-badge-profit.profit-negative {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+/* Full Expanded Panel Card */
+.amz-fba-card {
+  width: 380px;
+  background: var(--amz-fba-bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--amz-fba-border);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  animation: amzFbaSlideIn 0.25s ease-out;
+}
+
+@keyframes amzFbaSlideIn {
+  from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Card Header */
+.amz-fba-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--amz-fba-bg-dark);
+  border-bottom: 1px solid var(--amz-fba-border);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.amz-fba-header:active,
+.amz-fba-header.dragging {
+  cursor: grabbing;
+}
+
+.amz-fba-brand-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.amz-fba-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.amz-fba-icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--amz-fba-text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.amz-fba-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Tab Bar Navigation */
+.amz-fba-tab-bar {
+  display: flex;
+  background: var(--amz-fba-bg-dark);
+  border-bottom: 1px solid var(--amz-fba-border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.amz-fba-tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.amz-fba-tab-item {
+  flex: 1;
+  padding: 9px 5px;
+  background: transparent;
+  border: none;
+  color: var(--amz-fba-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.amz-fba-tab-item:hover {
+  color: #fff;
+}
+
+.amz-fba-tab-item.active {
+  color: var(--amz-fba-primary);
+  border-bottom-color: var(--amz-fba-primary);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Content Body */
+.amz-fba-body {
+  padding: 14px;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.amz-fba-pane {
+  display: none;
+}
+
+.amz-fba-pane.active {
+  display: block;
+}
+
+/* =========================================
+   FIXED: AI CONFIDENCE SCORE CIRCLE GAUGE
+   Compact, centered, zero-overflow two-line layout
+   ========================================= */
+.amz-fba-confidence-card {
+  background: var(--amz-fba-bg-dark);
+  border: 1px solid var(--amz-fba-border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.amz-fba-confidence-header {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: var(--amz-fba-primary);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.amz-fba-confidence-body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.amz-fba-confidence-gauge {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.amz-fba-confidence-gauge svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.amz-fba-gauge-circle-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 6;
+}
+
+.amz-fba-gauge-circle-fill {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+.amz-fba-gauge-text-wrap {
+  position: relative;
+  z-index: 2;
+  max-width: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.amz-fba-gauge-label {
+  font-size: 7.5px;
+  font-weight: 800;
+  line-height: 1.05;
+  color: #d1d5db;
+  text-transform: uppercase;
+  word-break: break-word;
+  text-align: center;
+  margin-bottom: 1px;
+}
+
+.amz-fba-gauge-percent {
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.amz-fba-driver-pills {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.amz-fba-driver-pill {
+  background: var(--amz-fba-bg-input);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--amz-fba-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+}
+
+.amz-fba-driver-pill .pill-title {
+  color: var(--amz-fba-text-muted);
+  font-weight: 500;
+}
+
+.amz-fba-driver-pill .pill-val {
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Buy Criteria Stamp */
+.amz-fba-criteria-stamp {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.amz-fba-criteria-stamp.meets {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid #10b981;
+}
+
+.amz-fba-criteria-stamp.fails {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid #ef4444;
+}
+
+/* Section Box */
+.amz-fba-section {
+  background: var(--amz-fba-bg-dark);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid var(--amz-fba-border);
+}
+
+.amz-fba-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: var(--amz-fba-primary);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Grid Layouts */
+.amz-fba-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.amz-fba-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.amz-fba-stat {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.amz-fba-stat-label {
+  font-size: 11px;
+  color: var(--amz-fba-text-muted);
+  margin-bottom: 3px;
+}
+
+.amz-fba-stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.amz-fba-stat-value.highlight-green { color: #34d399; }
+.amz-fba-stat-value.highlight-yellow { color: #fbbf24; }
+.amz-fba-stat-value.highlight-red { color: #f87171; }
+
+/* =========================================
+   CRITICAL INPUT STYLING - HIGH SPECIFICITY RESET
+   Overrides Amazon native white backgrounds completely!
+   ========================================= */
+#amz-fba-overlay-container .amz-fba-input-group {
+  margin-bottom: 8px;
+}
+
+#amz-fba-overlay-container .amz-fba-label {
+  display: block;
+  font-size: 11px;
+  color: var(--amz-fba-text-muted);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+#amz-fba-overlay-container .amz-fba-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#amz-fba-overlay-container .amz-fba-prefix {
+  position: absolute;
+  left: 10px;
+  color: var(--amz-fba-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  pointer-events: none;
+  z-index: 2;
+}
+
+#amz-fba-overlay-container input.amz-fba-input,
+#amz-fba-overlay-container input[type="number"].amz-fba-input,
+#amz-fba-overlay-container input[type="text"].amz-fba-input {
+  width: 100% !important;
+  background-color: var(--amz-fba-bg-input) !important;
+  background: var(--amz-fba-bg-input) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--amz-fba-border) !important;
+  border-radius: 8px !important;
+  padding: 8px 10px 8px 24px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  height: 34px !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: textfield !important;
+}
+
+#amz-fba-overlay-container input.amz-fba-input:focus {
+  border-color: var(--amz-fba-primary) !important;
+  background-color: var(--amz-fba-bg-input) !important;
+  color: #ffffff !important;
+}
+
+#amz-fba-overlay-container input.amz-fba-input::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+/* Profit Results Box */
+.amz-fba-results {
+  background: linear-gradient(145deg, var(--amz-fba-bg-dark), var(--amz-fba-bg-card));
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid var(--amz-fba-primary);
+}
+
+.amz-fba-profit-hero {
+  text-align: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 10px;
+}
+
+.amz-fba-profit-hero-label {
+  font-size: 12px;
+  color: var(--amz-fba-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.amz-fba-profit-hero-value {
+  font-size: 26px;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.amz-fba-profit-hero-value.positive { color: #10b981; }
+.amz-fba-profit-hero-value.negative { color: #ef4444; }
+
+/* Break-Even & Floor Price Box */
+.amz-fba-breakeven-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  margin-top: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.amz-fba-breakeven-item {
+  text-align: center;
+}
+
+.amz-fba-breakeven-item span {
+  display: block;
+  font-size: 10px;
+  color: var(--amz-fba-text-muted);
+}
+
+.amz-fba-breakeven-item strong {
+  font-size: 13px;
+  color: #fbbf24;
+}
+
+/* Fee Breakdown List */
+.amz-fba-fee-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--amz-fba-text-muted);
+  padding: 3px 0;
+}
+
+.amz-fba-fee-row span:last-child {
+  font-weight: 600;
+  color: #d1d5db;
+}
+
+/* =========================================
+   RESTRICTIONS CHECKLIST ("Can I sell this?")
+   ========================================= */
+.amz-fba-restrictions-card {
+  background: var(--amz-fba-bg-dark);
+  border-radius: 12px;
+  border: 1px solid var(--amz-fba-border);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.amz-fba-restrictions-header {
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--amz-fba-border);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.amz-fba-restrictions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--amz-fba-border);
+}
+
+.amz-fba-rest-cell {
+  background: var(--amz-fba-bg-dark);
+  padding: 14px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.amz-fba-rest-cell:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.amz-fba-status-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.amz-fba-status-dot.dot-green {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+.amz-fba-status-dot.dot-amber {
+  background: #f59e0b;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+}
+
+.amz-fba-status-dot.dot-red {
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
+.amz-fba-rest-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.amz-fba-rest-detail-box {
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 11px;
+  color: var(--amz-fba-text-muted);
+  line-height: 1.4;
+  border-top: 1px solid var(--amz-fba-border);
+}
+
+/* =========================================
+   CHARTS & HISTORICAL TRENDS STYLES
+   ========================================= */
+.amz-fba-timeframe-bar {
+  display: flex;
+  background: var(--amz-fba-bg-input);
+  border: 1px solid var(--amz-fba-border);
+  border-radius: 8px;
+  padding: 2px;
+  margin-bottom: 12px;
+}
+
+.amz-fba-timeframe-btn {
+  flex: 1;
+  padding: 6px 0;
+  border: none;
+  background: transparent;
+  color: var(--amz-fba-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.amz-fba-timeframe-btn:hover {
+  color: #fff;
+}
+
+.amz-fba-timeframe-btn.active {
+  background: var(--amz-fba-primary);
+  color: #111;
+}
+
+.amz-fba-chart-card {
+  background: var(--amz-fba-bg-dark);
+  border: 1px solid var(--amz-fba-border);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.amz-fba-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.amz-fba-chart-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.amz-fba-chart-sub {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--amz-fba-primary);
+}
+
+.amz-fba-chart-svg {
+  width: 100%;
+  height: 110px;
+  display: block;
+}
+
+.amz-fba-chart-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.amz-fba-chart-stat-item {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.amz-fba-chart-stat-item span {
+  display: block;
+  font-size: 9px;
+  color: var(--amz-fba-text-muted);
+}
+
+.amz-fba-chart-stat-item strong {
+  font-size: 11px;
+  color: #fff;
+}
+
+/* External Link Buttons */
+.amz-fba-ext-links {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* =========================================
+   WHOLESALE & SOURCING STYLES
+   ========================================= */
+.amz-fba-source-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.amz-fba-source-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--amz-fba-bg-input);
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--amz-fba-border);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.amz-fba-source-card:hover {
+  border-color: var(--amz-fba-primary);
+  transform: translateX(2px);
+}
+
+.amz-fba-source-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.amz-fba-source-icon {
+  font-size: 18px;
+}
+
+.amz-fba-source-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.amz-fba-source-desc {
+  font-size: 10px;
+  color: var(--amz-fba-text-muted);
+}
+
+.amz-fba-source-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 153, 0, 0.15);
+  color: var(--amz-fba-primary);
+  font-weight: 700;
+}
+
+/* =========================================
+   PURCHASE QUANTITY TIERS
+   ========================================= */
+.amz-fba-tier-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--amz-fba-border);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+.amz-fba-tier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.amz-fba-tier-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.amz-fba-tier-qty {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--amz-fba-primary);
+}
+
+/* Action Buttons */
+.amz-fba-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.amz-fba-btn {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.amz-fba-btn-primary {
+  background: var(--amz-fba-primary);
+  color: #111;
+}
+
+.amz-fba-btn-primary:hover {
+  background: var(--amz-fba-primary-hover);
+}
+
+.amz-fba-btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e5e7eb;
+}
+
+.amz-fba-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.amz-fba-toast {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #10b981;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  animation: amzFbaFadeInOut 2.5s forwards;
+  pointer-events: none;
+}
+
+@keyframes amzFbaFadeInOut {
+  0% { opacity: 0; transform: translate(-50%, 10px); }
+  15% { opacity: 1; transform: translate(-50%, 0); }
+  85% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+
+/* =========================================
+   SEARCH PAGE QUICK SCOUT BADGE
+   Injected into each card on /s?k= search pages
+   ========================================= */
+.amz-fba-search-scout-card {
+  display: block;
+  background: #131921 !important;
+  color: #f3f4f6 !important;
+  border: 1px solid #ff9900 !important;
+  border-radius: 8px !important;
+  padding: 6px 10px !important;
+  margin: 8px 0 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: 11px !important;
+  line-height: 1.3 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+  z-index: 10 !important;
+}
+
+.amz-fba-search-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+}
+
+.amz-fba-search-logo {
+  background: #ff9900;
+  color: #111;
+  font-weight: 900;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.amz-fba-search-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.amz-fba-search-stat span {
+  display: block;
+  font-size: 9px;
+  color: #9ca3af;
+}
+
+.amz-fba-search-stat strong {
+  font-size: 11px;
+}
