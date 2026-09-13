@@ -26,7 +26,7 @@ Everything runs locally in your browser with **zero external dependencies**, **z
 - **Factor Drivers**: Evaluates ROI %, estimated sales velocity, Buy Box stability, competition density, and gating risks into one clear action rating (`HIGH CHANCE`, `ABOVE AVERAGE`, `AVERAGE`, `RISKY / PASS`).
 
 ### 🔄 3. Buy Box Rotation & Win Odds Analyzer
-- **Explicit Buy Box Winner Identification**: Direct extraction of the actual 3rd-party seller storefront link (`AL SHARIF LOOM LLC`, `Lush Gallery USA`), filtering out generic placeholders or Amazon Resale used returns.
+- **Explicit Buy Box Winner Identification**: Direct extraction of the actual 3rd-party seller storefront link, filtering out generic placeholders or Amazon Resale used returns.
 - **Win Probability %**: Estimates your statistical likelihood of capturing the Buy Box based on competitive rotation.
 - **Time to First Win**: Projects expected wait time before your offer enters the active Buy Box (`~2-4 hrs`, `~4-8 hrs`, `~12-24 hrs`).
 - **Suggested Purchase Quantities**: Computes realistic restock recommendations:
