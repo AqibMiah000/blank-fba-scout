@@ -51,6 +51,6 @@ links.forEach(l => console.log(`- ${l.name} (${l.badge}): ${l.url}`));
 console.log('\n--- Testing Theme Engine ---');
 const themes = ThemeEngine.getAvailableThemes();
 console.log('Themes available:', themes.map(t => t.name).join(', '));
-assert.strictEqual(themes.length, 5);
+assert.strictEqual(themes.length, 10);
 
 console.log('\nAll new module tests passed!');
