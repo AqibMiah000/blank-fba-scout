@@ -1,5 +1,5 @@
 /**
- * Amazon FBA & Profit/ROI Calculator Engine v1.4.0
+ * Amazon FBA & Profit/ROI Calculator Engine v1.3.0
  * Supports Amazon US fee structures, size tiers, break-even price, Q4 storage fees, and buy criteria.
  */
 (function (root, factory) {

@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "BLANK FBA SCOUT",
+  "version": "1.4.0",
+  "description": "All-in-one Amazon FBA product research, profit margins, AI confidence score, sales velocity charts, wholesale sourcing, search page scout, and top 100 wholesale directory.",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.amazon.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.amazon.com/*"
+      ],
+      "js": [
+        "shared/fba-calculator.js",
+        "shared/bsr-estimator.js",
+        "shared/restrictions-checker.js",
+        "shared/competition-analyzer.js",
+        "shared/confidence-score.js",
+        "shared/charts-engine.js",
+        "shared/wholesale-sourcing.js",
+        "shared/top-wholesale-products.js",
+        "shared/variation-analyzer.js",
+        "shared/themes.js",
+        "content/content.js"
+      ],
+      "css": [
+        "content/content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 /**
- * BLANK FBA SCOUT - Popup Script v1.4.0
+ * BLANK FBA SCOUT - Popup Script v1.3.0
  */
 
 document.addEventListener('DOMContentLoaded', async () => {

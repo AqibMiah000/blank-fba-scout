@@ -1,5 +1,5 @@
 /**
- * BLANK FBA SCOUT - Content Script v1.4.0
+ * BLANK FBA SCOUT - Content Script v1.3.0
  * Injected on Amazon US Product & Search Result Pages
  */
 
