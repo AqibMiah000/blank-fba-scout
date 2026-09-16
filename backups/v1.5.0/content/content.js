@@ -15,12 +15,17 @@
   let activeChartTimeframe = 30;
   let savedWidgetPosition = null;
 
+  const currentMarketplace = (typeof MarketplaceEngine !== 'undefined') ? 
+    MarketplaceEngine.detectMarketplace(window.location.hostname) : 
+    { code: 'US', name: 'Amazon US', symbol: '$', currency: 'USD', vatRate: 0.0 };
+
   // User Settings defaults
   let userSettings = {
     theme: 'amber',
     inboundShippingRatePerLb: 0.40,
     prepFee: 0.20,
     inboundPlacementFee: 0.00,
+    keepaApiKey: '',
     targetRoi: 30,
     minProfit: 3.00,
     maxBsr: 50000,
@@ -492,6 +497,9 @@
         weightLb: weightLb,
         inboundShippingRatePerLb: userSettings.inboundShippingRatePerLb,
         prepFee: userSettings.prepFee,
+        inboundPlacementFee: userSettings.inboundPlacementFee,
+        vatRate: currentMarketplace.vatRate,
+        marketplace: currentMarketplace.code,
         targetRoi: userSettings.targetRoi,
         minProfit: userSettings.minProfit,
         maxBsr: userSettings.maxBsr,
@@ -540,7 +548,12 @@
       }) : { score: 50, ratingLabel: 'Average', ratingColor: '#f59e0b', drivers: [] };
 
     const sourcingLinks = window.WholesaleSourcing ? 
-      window.WholesaleSourcing.generateSourcingLinks({ title, brand, asin }) : [];
+      window.WholesaleSourcing.generateSourcingLinks({ 
+        title, 
+        brand, 
+        asin, 
+        hostSuffix: currentMarketplace.hostSuffix 
+      }) : [];
 
     return {
       asin,
@@ -549,6 +562,11 @@
       imageUrl,
       price,
       bsr,
+      marketplace: currentMarketplace.name,
+      currency: currentMarketplace.currency,
+      symbol: currentMarketplace.symbol,
+      hostSuffix: currentMarketplace.hostSuffix,
+      vatRate: currentMarketplace.vatRate,
       category: category || 'General',
       dimensions,
       weightLb,
@@ -737,7 +755,7 @@
             ${data.estimatedMonthlySales > 0 ? `(~${data.estimatedMonthlySales.toLocaleString()} mo)` : ''}
           </div>
           <div class="amz-fba-badge-profit ${profitClass}">
-            ${profitSign}$${calc.netProfit.toFixed(2)}
+            ${profitSign}${symbol}${Math.abs(calc.netProfit).toFixed(2)}
           </div>
         </div>
       `;
@@ -761,6 +779,7 @@
               <span class="amz-fba-drag-grip" style="font-size:14px;margin-right:2px;cursor:grab;">⋮⋮</span>
               <span class="amz-fba-badge-logo">BFS</span>
               <span>BLANK FBA SCOUT</span>
+              <span style="font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.1);color:#9ca3af;margin-left:6px;">${currentMarketplace.name}</span>
             </div>
             <div class="amz-fba-header-actions">
               <button class="amz-fba-icon-btn" id="amz-fba-btn-minimize" title="Minimize">
@@ -792,7 +811,7 @@
               <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--amz-fba-text-muted);">
                 <span>BSR: <strong style="color:#fbbf24;">#${data.bsr.toLocaleString()}</strong></span>
                 <span>Sales: <strong style="color:#34d399;">~${data.estimatedMonthlySales.toLocaleString()}/mo</strong></span>
-                <span>Price: <strong style="color:#fff;">$${data.price.toFixed(2)}</strong></span>
+                <span>Price: <strong style="color:#fff;">${symbol}${data.price.toFixed(2)}</strong></span>
               </div>
             </div>
 
@@ -827,7 +846,7 @@
                 <div class="amz-fba-profit-hero">
                   <div class="amz-fba-profit-hero-label">Estimated Net Profit</div>
                   <div class="amz-fba-profit-hero-value ${calc.netProfit >= 0 ? 'positive' : 'negative'}" id="calc-net-profit">
-                    $${calc.netProfit.toFixed(2)}
+                    ${calc.netProfit >= 0 ? '' : '-'}${symbol}${Math.abs(calc.netProfit).toFixed(2)}
                   </div>
                 </div>
                 <div class="amz-fba-grid-2">
@@ -845,11 +864,11 @@
                 <div class="amz-fba-breakeven-box">
                   <div class="amz-fba-breakeven-item">
                     <span>Break-Even Price:</span>
-                    <strong id="calc-be-price">$${calc.breakEvenPrice.toFixed(2)}</strong>
+                    <strong id="calc-be-price">${symbol}${calc.breakEvenPrice.toFixed(2)}</strong>
                   </div>
                   <div class="amz-fba-breakeven-item">
                     <span>Min Price (${userSettings.targetRoi}% ROI):</span>
-                    <strong id="calc-min-price">$${calc.targetMinPrice.toFixed(2)}</strong>
+                    <strong id="calc-min-price">${symbol}${calc.targetMinPrice.toFixed(2)}</strong>
                   </div>
                 </div>
               </div>
@@ -861,56 +880,66 @@
                   <div class="amz-fba-input-group">
                     <label class="amz-fba-label">Sell Price</label>
                     <div class="amz-fba-input-wrap">
-                      <span class="amz-fba-prefix">$</span>
+                      <span class="amz-fba-prefix">${symbol}</span>
                       <input type="number" step="0.01" class="amz-fba-input" id="input-sell-price" value="${data.price.toFixed(2)}">
                     </div>
                   </div>
                   <div class="amz-fba-input-group">
                     <label class="amz-fba-label">Buy Cost (COGS)</label>
                     <div class="amz-fba-input-wrap">
-                      <span class="amz-fba-prefix">$</span>
+                      <span class="amz-fba-prefix">${symbol}</span>
                       <input type="number" step="0.01" class="amz-fba-input" id="input-cogs" value="${calc.costOfGoods ? calc.costOfGoods.toFixed(2) : '0.00'}">
                     </div>
                   </div>
                 </div>
                 <div class="amz-fba-grid-2">
                   <div class="amz-fba-input-group">
-                    <label class="amz-fba-label">Shipping Rate ($/lb)</label>
+                    <label class="amz-fba-label">Shipping Rate (${symbol}/lb)</label>
                     <div class="amz-fba-input-wrap">
-                      <span class="amz-fba-prefix">$</span>
+                      <span class="amz-fba-prefix">${symbol}</span>
                       <input type="number" step="0.05" class="amz-fba-input" id="input-shipping-rate" value="${userSettings.inboundShippingRatePerLb.toFixed(2)}">
                     </div>
                   </div>
                   <div class="amz-fba-input-group">
-                    <label class="amz-fba-label">Prep Fee ($)</label>
+                    <label class="amz-fba-label">Prep Fee (${symbol})</label>
                     <div class="amz-fba-input-wrap">
-                      <span class="amz-fba-prefix">$</span>
+                      <span class="amz-fba-prefix">${symbol}</span>
                       <input type="number" step="0.05" class="amz-fba-input" id="input-prep-fee" value="${userSettings.prepFee.toFixed(2)}">
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Fee Breakdown with Q4 Storage -->
+              <!-- Fee Breakdown with Q4 Storage & VAT -->
               <div class="amz-fba-section">
                 <div class="amz-fba-section-title"><span>Amazon Fee Breakdown</span></div>
+                ${calc.vatAmount > 0 ? `
+                  <div class="amz-fba-fee-row" style="color:#93c5fd;">
+                    <span>VAT (${(calc.vatRate * 100).toFixed(0)}% included):</span><span>${symbol}${calc.vatAmount.toFixed(2)}</span>
+                  </div>
+                ` : ''}
                 <div class="amz-fba-fee-row">
-                  <span>Referral Fee:</span><span id="calc-ref-fee">$${calc.referralFee.toFixed(2)}</span>
+                  <span>Referral Fee:</span><span id="calc-ref-fee">${symbol}${calc.referralFee.toFixed(2)}</span>
                 </div>
                 <div class="amz-fba-fee-row">
-                  <span>FBA Pick & Pack Fee:</span><span id="calc-fba-fee">$${calc.fbaFee.toFixed(2)}</span>
+                  <span>FBA Pick & Pack Fee:</span><span id="calc-fba-fee">${symbol}${calc.fbaFee.toFixed(2)}</span>
                 </div>
                 <div class="amz-fba-fee-row">
-                  <span>Inbound Shipping:</span><span id="calc-ship-fee">$${calc.inboundShipping.toFixed(2)}</span>
+                  <span>Inbound Shipping:</span><span id="calc-ship-fee">${symbol}${calc.inboundShipping.toFixed(2)}</span>
+                </div>
+                ${calc.inboundPlacementFee > 0 ? `
+                  <div class="amz-fba-fee-row" style="color:#cbd5e1;">
+                    <span>Inbound Placement Fee:</span><span>${symbol}${calc.inboundPlacementFee.toFixed(2)}</span>
+                  </div>
+                ` : ''}
+                <div class="amz-fba-fee-row">
+                  <span>Standard Storage (Jan-Sep):</span><span>${symbol}${calc.standardMonthlyStorage.toFixed(2)}/mo</span>
                 </div>
                 <div class="amz-fba-fee-row">
-                  <span>Standard Storage (Jan-Sep):</span><span>$${calc.standardMonthlyStorage.toFixed(2)}/mo</span>
-                </div>
-                <div class="amz-fba-fee-row">
-                  <span>Q4 Peak Storage (Oct-Dec):</span><span style="color:#fbbf24;">$${calc.q4MonthlyStorage.toFixed(2)}/mo</span>
+                  <span>Q4 Peak Storage (Oct-Dec):</span><span style="color:#fbbf24;">${symbol}${calc.q4MonthlyStorage.toFixed(2)}/mo</span>
                 </div>
                 <div class="amz-fba-fee-row" style="border-top:1px solid rgba(255,255,255,0.06);margin-top:4px;padding-top:4px;">
-                  <span>Total Costs & Fees:</span><span id="calc-total-costs">$${calc.totalCosts.toFixed(2)}</span>
+                  <span>Total Costs & Fees:</span><span id="calc-total-costs">${symbol}${calc.totalCosts.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -1148,18 +1177,22 @@
       weightLb: data.weightLb,
       inboundShippingRatePerLb: shipRate,
       prepFee: prep,
+      inboundPlacementFee: userSettings.inboundPlacementFee,
+      vatRate: currentMarketplace.vatRate,
+      marketplace: currentMarketplace.code,
       targetRoi: userSettings.targetRoi,
       minProfit: userSettings.minProfit,
       maxBsr: userSettings.maxBsr,
       bsr: data.bsr
     });
 
+    const symbol = currentMarketplace.symbol || '$';
     const netProfitEl = document.getElementById('calc-net-profit');
     const marginEl = document.getElementById('calc-margin');
     const roiEl = document.getElementById('calc-roi');
 
     if (netProfitEl) {
-      netProfitEl.innerText = `${res.netProfit >= 0 ? '' : '-'}$${Math.abs(res.netProfit).toFixed(2)}`;
+      netProfitEl.innerText = `${res.netProfit >= 0 ? '' : '-'}${symbol}${Math.abs(res.netProfit).toFixed(2)}`;
       netProfitEl.className = `amz-fba-profit-hero-value ${res.netProfit >= 0 ? 'positive' : 'negative'}`;
     }
 
@@ -1175,18 +1208,18 @@
 
     const beEl = document.getElementById('calc-be-price');
     const minPriceEl = document.getElementById('calc-min-price');
-    if (beEl) beEl.innerText = `$${res.breakEvenPrice.toFixed(2)}`;
-    if (minPriceEl) minPriceEl.innerText = `$${res.targetMinPrice.toFixed(2)}`;
+    if (beEl) beEl.innerText = `${symbol}${res.breakEvenPrice.toFixed(2)}`;
+    if (minPriceEl) minPriceEl.innerText = `${symbol}${res.targetMinPrice.toFixed(2)}`;
 
     const refEl = document.getElementById('calc-ref-fee');
     const fbaEl = document.getElementById('calc-fba-fee');
     const shipEl = document.getElementById('calc-ship-fee');
     const totalEl = document.getElementById('calc-total-costs');
 
-    if (refEl) refEl.innerText = `$${res.referralFee.toFixed(2)}`;
-    if (fbaEl) fbaEl.innerText = `$${res.fbaFee.toFixed(2)}`;
-    if (shipEl) shipEl.innerText = `$${res.inboundShipping.toFixed(2)}`;
-    if (totalEl) totalEl.innerText = `$${res.totalCosts.toFixed(2)}`;
+    if (refEl) refEl.innerText = `${symbol}${res.referralFee.toFixed(2)}`;
+    if (fbaEl) fbaEl.innerText = `${symbol}${res.fbaFee.toFixed(2)}`;
+    if (shipEl) shipEl.innerText = `${symbol}${res.inboundShipping.toFixed(2)}`;
+    if (totalEl) totalEl.innerText = `${symbol}${res.totalCosts.toFixed(2)}`;
 
     data.lastCalculation = res;
   }
@@ -1305,15 +1338,21 @@
   }
 
   /**
-   * IN-GRID SEARCH PAGE QUICK SCOUT
-   * Injects badges into Amazon search results
+   * IN-GRID SEARCH PAGE QUICK SCOUT (High Performance)
+   * Injects badges into Amazon search results with zero page lag
    */
   function injectSearchPageBadges() {
     if (!isSearchPage()) return;
 
-    const cards = document.querySelectorAll('div[data-component-type="s-search-result"], .s-result-item[data-asin]');
+    // Fast query for unscouted cards only - zero overhead on already processed cards!
+    const cards = document.querySelectorAll('div[data-component-type="s-search-result"]:not([data-fba-scouted]), .s-result-item[data-asin]:not([data-fba-scouted])');
+    if (!cards || cards.length === 0) return;
+
+    const symbol = currentMarketplace.symbol || '$';
+
     cards.forEach(card => {
-      if (card.querySelector('.amz-fba-search-scout-card')) return; // already injected
+      card.setAttribute('data-fba-scouted', 'true');
+      if (card.querySelector('.amz-fba-search-scout-card')) return;
 
       const asin = card.getAttribute('data-asin');
       if (!asin || asin.length !== 10) return;
@@ -1340,11 +1379,11 @@
           </div>
           <div class="amz-fba-search-stat">
             <span>Price</span>
-            <strong style="color:#fff;">$${price.toFixed(2)}</strong>
+            <strong style="color:#fff;">${symbol}${price.toFixed(2)}</strong>
           </div>
           <div class="amz-fba-search-stat">
             <span>Target Profit</span>
-            <strong style="color:#fbbf24;">+$${estProfit}</strong>
+            <strong style="color:#fbbf24;">+${symbol}${estProfit}</strong>
           </div>
         </div>
       `;
@@ -1367,6 +1406,8 @@
         'widgetPosition',
         'inboundShippingRatePerLb',
         'prepFee',
+        'inboundPlacementFee',
+        'keepaApiKey',
         'targetRoi',
         'minProfit',
         'maxBsr',
@@ -1382,6 +1423,8 @@
       if (res.widgetPosition) savedWidgetPosition = res.widgetPosition;
       if (res.inboundShippingRatePerLb !== undefined) userSettings.inboundShippingRatePerLb = Number(res.inboundShippingRatePerLb);
       if (res.prepFee !== undefined) userSettings.prepFee = Number(res.prepFee);
+      if (res.inboundPlacementFee !== undefined) userSettings.inboundPlacementFee = Number(res.inboundPlacementFee);
+      if (res.keepaApiKey !== undefined) userSettings.keepaApiKey = res.keepaApiKey;
       if (res.targetRoi !== undefined) userSettings.targetRoi = Number(res.targetRoi);
       if (res.minProfit !== undefined) userSettings.minProfit = Number(res.minProfit);
       if (res.maxBsr !== undefined) userSettings.maxBsr = Number(res.maxBsr);
@@ -1423,32 +1466,47 @@
   setTimeout(init, 800);
 
   let lastUrl = location.href;
-  let dynamicOffersTimeout = null;
+  let observerDebounceTimeout = null;
 
-  new MutationObserver(() => {
+  const pageObserver = new MutationObserver(() => {
     const url = location.href;
     if (url !== lastUrl) {
       lastUrl = url;
-      setTimeout(init, 1000);
-    } else if (isSearchPage()) {
-      injectSearchPageBadges();
-    } else {
-      // Check if side drawer (#all-offers-display) was opened or updated
-      const aod = document.getElementById('all-offers-display');
-      if (aod && currentProductData) {
-        if (dynamicOffersTimeout) clearTimeout(dynamicOffersTimeout);
-        dynamicOffersTimeout = setTimeout(() => {
-          const aodOffers = document.querySelectorAll('#all-offers-display .aod-offer, #aod-offer-list > div, #all-offers-display [id^="aod-offer"], #all-offers-display div[id*="soldby"], #all-offers-display [data-action="aod-ajax-add-to-cart"]');
+      setTimeout(init, 800);
+      return;
+    }
+
+    if (observerDebounceTimeout) return;
+    observerDebounceTimeout = setTimeout(() => {
+      observerDebounceTimeout = null;
+      if (isSearchPage()) {
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(() => injectSearchPageBadges(), { timeout: 1000 });
+        } else {
+          injectSearchPageBadges();
+        }
+      } else {
+        const aod = document.getElementById('all-offers-display');
+        if (aod && currentProductData) {
+          const aodOffers = aod.querySelectorAll('.aod-offer, #aod-offer-list > div, [id^="aod-offer"]');
           if (aodOffers.length > 0 && aodOffers.length !== currentProductData.sellerCount) {
             const freshData = scrapeProduct();
             if (freshData && freshData.sellerCount !== currentProductData.sellerCount) {
               renderWidget(freshData);
             }
           }
-        }, 400);
+        }
       }
-    }
-  }).observe(document, { subtree: true, childList: true });
+    }, 450);
+  });
+
+  if (document.body) {
+    pageObserver.observe(document.body, { childList: true, subtree: true });
+  } else {
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.body) pageObserver.observe(document.body, { childList: true, subtree: true });
+    });
+  }
 
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === 'GET_CURRENT_PRODUCT') {

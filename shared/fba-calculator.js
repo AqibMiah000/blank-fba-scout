@@ -197,6 +197,8 @@
     inboundShippingRatePerLb = 0.40,
     prepFee = 0.20,
     inboundPlacementFee = 0,
+    vatRate = 0,
+    marketplace = 'US',
     targetRoi = 30,
     minProfit = 3.00,
     maxBsr = 50000,
@@ -208,6 +210,10 @@
     const shipRate = Number(inboundShippingRatePerLb) >= 0 ? Number(inboundShippingRatePerLb) : 0.40;
     const prep = Number(prepFee) >= 0 ? Number(prepFee) : 0.20;
     const placementFee = Number(inboundPlacementFee) >= 0 ? Number(inboundPlacementFee) : 0;
+    const vat = Number(vatRate) >= 0 ? Number(vatRate) : 0;
+
+    const vatAmount = vat > 0 ? price - (price / (1 + vat)) : 0;
+    const netRevenue = price - vatAmount;
 
     const referralFee = calculateReferralFee(price, category);
     const fbaResult = calculateFulfillmentFee(dimensions, weight);
@@ -216,7 +222,7 @@
 
     const totalAmazonFees = referralFee + fbaResult.fee + placementFee;
     const totalCosts = cogs + totalAmazonFees + inboundShipping + prep;
-    const netProfit = price - totalCosts;
+    const netProfit = netRevenue - totalCosts;
 
     const profitMargin = price > 0 ? (netProfit / price) * 100 : 0;
     const totalInvestment = cogs + inboundShipping + prep + placementFee;
@@ -226,7 +232,7 @@
     const be = calculateBreakEven({
       costOfGoods: cogs,
       inboundShipping,
-      prepFee: prep + placementFee,
+      prepFee: prep + placementFee + vatAmount,
       fbaFee: fbaResult.fee,
       category,
       targetRoi
@@ -249,6 +255,8 @@
       inboundShipping: Number(inboundShipping.toFixed(2)),
       prepFee: Number(prep.toFixed(2)),
       inboundPlacementFee: Number(placementFee.toFixed(2)),
+      vatAmount: Number(vatAmount.toFixed(2)),
+      marketplace,
       totalAmazonFees: Number(totalAmazonFees.toFixed(2)),
       totalCosts: Number(totalCosts.toFixed(2)),
       netProfit: Number(netProfit.toFixed(2)),

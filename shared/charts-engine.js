@@ -190,9 +190,25 @@
     `;
   }
 
+  /**
+   * Optional Keepa API Integration: Parse Keepa historical price/BSR array
+   * Keepa returns csv format: [time1, val1, time2, val2, ...]
+   */
+  function parseKeepaCsv(csvArray, isPrice = true) {
+    if (!csvArray || !Array.isArray(csvArray) || csvArray.length < 4) return null;
+    const points = [];
+    for (let i = 1; i < csvArray.length; i += 2) {
+      const val = csvArray[i];
+      if (val === -1) continue;
+      points.push(isPrice ? val / 100 : val);
+    }
+    return points.length >= 3 ? points : null;
+  }
+
   return {
     renderBsrChart,
     renderPriceChart,
-    renderStockVsPriceChart
+    renderStockVsPriceChart,
+    parseKeepaCsv
   };
 });

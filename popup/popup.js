@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let currentActiveProduct = null;
   let activeCategoryFilter = 'All';
+  let activeMarketplace = { symbol: '$', hostSuffix: 'amazon.com', name: 'Amazon US', currency: 'USD' };
 
   await loadSettings();
   await loadActiveTabProduct();
@@ -34,11 +35,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (!tab || !tab.url || !tab.url.includes('amazon.com')) {
+      if (!tab || !tab.url || !tab.url.match(/amazon\.(com|co\.uk|de|fr|it|es|ca)/i)) {
         loadingEl.classList.add('hidden');
         noneEl.classList.remove('hidden');
         return;
       }
+
+      const m = (typeof MarketplaceEngine !== 'undefined') ? 
+        MarketplaceEngine.detectMarketplace(tab.url) : 
+        { symbol: '$', hostSuffix: 'amazon.com', name: 'Amazon US', currency: 'USD' };
+      activeMarketplace = m;
+
+      const marketBadge = document.getElementById('market-badge');
+      if (marketBadge) marketBadge.innerText = m.name;
 
       chrome.tabs.sendMessage(tab.id, { type: 'GET_CURRENT_PRODUCT' }, (response) => {
         loadingEl.classList.add('hidden');
@@ -64,8 +73,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         document.getElementById('active-bsr').innerText = p.bsr > 0 ? `#${p.bsr.toLocaleString()}` : 'Unranked';
         document.getElementById('active-sales').innerText = `${(p.estimatedMonthlySales || 0).toLocaleString()} /mo`;
-        document.getElementById('active-price').innerText = `$${(p.price || 0).toFixed(2)}`;
-        document.getElementById('active-revenue').innerText = `$${Math.round(p.estimatedRevenue || 0).toLocaleString()}`;
+        document.getElementById('active-price').innerText = `${m.symbol}${(p.price || 0).toFixed(2)}`;
+        document.getElementById('active-revenue').innerText = `${m.symbol}${Math.round(p.estimatedRevenue || 0).toLocaleString()}`;
 
         if (p.restrictions) {
           const r = p.restrictions;
@@ -204,11 +213,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       'ASIN',
       'Title',
       'Brand',
+      'Marketplace',
       'Category',
       'BSR',
       'Estimated Monthly Units',
       'Estimated Monthly Revenue',
       'Confidence Score %',
+      'Currency',
       'Sell Price',
       'COGS',
       'Net Profit',
@@ -222,17 +233,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       `"${item.asin}"`,
       `"${(item.title || '').replace(/"/g, '""')}"`,
       `"${(item.brand || '').replace(/"/g, '""')}"`,
+      `"${item.marketplace || activeMarketplace.name || 'Amazon US'}"`,
       `"${(item.category || '').replace(/"/g, '""')}"`,
       item.bsr || 0,
       item.estimatedMonthlySales || 0,
       (item.estimatedRevenue || 0).toFixed(2),
       item.confidenceScore || 50,
+      `"${item.currency || activeMarketplace.currency || 'USD'}"`,
       (item.sellPrice || 0).toFixed(2),
       (item.cogs || 0).toFixed(2),
       (item.netProfit || 0).toFixed(2),
       (item.profitMargin || 0).toFixed(1),
       (item.roi || 0).toFixed(1),
-      `"https://www.amazon.com/dp/${item.asin}"`,
+      `"https://www.${item.hostSuffix || activeMarketplace.hostSuffix || 'amazon.com'}/dp/${item.asin}"`,
       `"${item.savedAt ? new Date(item.savedAt).toLocaleDateString() : ''}"`
     ]);
 
@@ -241,7 +254,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `blank_fba_scout_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `blank_fba_scout_watchlist_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -249,13 +262,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Sync with Google Sheets Webhook
   document.getElementById('btn-sync-sheets').addEventListener('click', async () => {
-    const { googleSheetsWebhook, watchlist = [] } = await chrome.storage.local.get(['googleSheetsWebhook', 'watchlist']);
-    if (!googleSheetsWebhook) {
-      alert('Please set your Google Sheets Webhook URL in the Settings tab first!');
+    const { watchlist = [], googleSheetsWebhook = '' } = await chrome.storage.local.get(['watchlist', 'googleSheetsWebhook']);
+    if (watchlist.length === 0) {
+      alert('Your watchlist is empty. Add products first!');
       return;
     }
-    if (watchlist.length === 0) {
-      alert('Your watchlist is empty. Track some products first!');
+    if (!googleSheetsWebhook) {
+      alert('Google Sheets Webhook URL is not set. Go to Settings tab to enter it!');
       return;
     }
 
@@ -278,6 +291,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!window.TopWholesaleProducts) return;
     const container = document.getElementById('top100-list');
     const products = window.TopWholesaleProducts.getProductsByCategory(activeCategoryFilter);
+    const symbol = activeMarketplace.symbol || '$';
+    const host = activeMarketplace.hostSuffix || 'amazon.com';
 
     container.innerHTML = products.map(item => `
       <div class="top100-card">
@@ -296,15 +311,15 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
           <div class="top100-stat">
             <span>Retail</span>
-            <strong>$${item.retailPrice.toFixed(2)}</strong>
+            <strong>${symbol}${item.retailPrice.toFixed(2)}</strong>
           </div>
           <div class="top100-stat">
             <span>Target Cost</span>
-            <strong style="color:#60a5fa;">$${item.targetCost.toFixed(2)}</strong>
+            <strong style="color:#60a5fa;">${symbol}${item.targetCost.toFixed(2)}</strong>
           </div>
         </div>
         <div class="top100-actions">
-          <a href="https://www.amazon.com/s?k=${encodeURIComponent(item.name)}" target="_blank" class="top100-btn">
+          <a href="https://www.${host}/s?k=${encodeURIComponent(item.name)}" target="_blank" class="top100-btn">
             Amazon ↗
           </a>
           <a href="https://www.alibaba.com/trade/search?fsb=y&IndexArea=product_en&SearchText=${encodeURIComponent(item.query)}" target="_blank" class="top100-btn" style="color:#ff9900;border-color:rgba(255,153,0,0.3);">
@@ -395,6 +410,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       'targetRoi',
       'minProfit',
       'maxBsr',
+      'inboundPlacementFee',
+      'keepaApiKey',
       'googleSheetsWebhook',
       'tabCalculator',
       'tabRestrictions',
@@ -415,6 +432,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (res.prepFee !== undefined) {
       document.getElementById('setting-prep').value = Number(res.prepFee);
+    }
+    if (res.inboundPlacementFee !== undefined) {
+      const placementEl = document.getElementById('setting-placement-fee');
+      if (placementEl) placementEl.value = Number(res.inboundPlacementFee);
+    }
+    if (res.keepaApiKey !== undefined) {
+      const keepaEl = document.getElementById('setting-keepa-key');
+      if (keepaEl) keepaEl.value = res.keepaApiKey;
     }
     if (res.targetRoi !== undefined) {
       document.getElementById('setting-roi').value = Number(res.targetRoi);
@@ -448,6 +473,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const theme = document.getElementById('setting-theme').value;
     const shipping = parseFloat(document.getElementById('setting-shipping').value) || 0.40;
     const prep = parseFloat(document.getElementById('setting-prep').value) || 0.20;
+    const placementFee = parseFloat(document.getElementById('setting-placement-fee')?.value || 0) || 0;
+    const keepaKey = document.getElementById('setting-keepa-key')?.value.trim() || '';
     const roi = parseFloat(document.getElementById('setting-roi').value) || 30;
     const minProfit = parseFloat(document.getElementById('setting-min-profit').value) || 3.00;
     const maxBsr = parseInt(document.getElementById('setting-max-bsr').value, 10) || 50000;
@@ -463,6 +490,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       theme,
       inboundShippingRatePerLb: shipping,
       prepFee: prep,
+      inboundPlacementFee: placementFee,
+      keepaApiKey: keepaKey,
       targetRoi: roi,
       minProfit,
       maxBsr,
@@ -480,9 +509,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateActionIcon(theme);
 
     try {
-      const tabs = await chrome.tabs.query({ url: '*://*.amazon.com/*' });
-      for (const t of tabs) {
-        chrome.tabs.sendMessage(t.id, { type: 'SETTINGS_UPDATED' });
+      const amazonPatterns = [
+        '*://*.amazon.com/*',
+        '*://*.amazon.co.uk/*',
+        '*://*.amazon.de/*',
+        '*://*.amazon.fr/*',
+        '*://*.amazon.it/*',
+        '*://*.amazon.es/*',
+        '*://*.amazon.ca/*'
+      ];
+      for (const pattern of amazonPatterns) {
+        const tabs = await chrome.tabs.query({ url: pattern });
+        for (const t of tabs) {
+          chrome.tabs.sendMessage(t.id, { type: 'SETTINGS_UPDATED' });
+        }
       }
     } catch (e) {}
 

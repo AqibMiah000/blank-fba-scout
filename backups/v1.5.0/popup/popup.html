@@ -231,6 +231,18 @@
         <input type="number" step="0.05" id="setting-prep" class="form-input" value="0.20">
       </div>
 
+      <div class="settings-group">
+        <label class="setting-label">Default Inbound Placement Fee ($/unit)</label>
+        <input type="number" step="0.05" id="setting-placement-fee" class="form-input" value="0.00">
+      </div>
+
+      <!-- Keepa API Integration (Optional) -->
+      <div class="settings-group">
+        <label class="setting-label">Keepa API Key (Optional)</label>
+        <p class="text-sm text-muted">Enter Keepa API key to pull authentic 365-day historical Keepa price & BSR drops. Leave blank for built-in client engine.</p>
+        <input type="password" id="setting-keepa-key" class="form-input" placeholder="Optional Keepa API Key">
+      </div>
+
       <!-- Google Sheets Webhook -->
       <div class="settings-group">
         <label class="setting-label">Google Sheets Webhook URL (Optional)</label>
@@ -252,6 +264,7 @@
   </div>
 
   <script src="../shared/themes.js"></script>
+  <script src="../shared/marketplaces.js"></script>
   <script src="../shared/top-wholesale-products.js"></script>
   <script src="popup.js"></script>
 </body>

@@ -27,10 +27,12 @@
   /**
    * Generate curated sourcing platform links
    */
-  function generateSourcingLinks({ title = '', brand = '', asin = '' }) {
+  function generateSourcingLinks({ title = '', brand = '', asin = '', hostSuffix = 'amazon.com' }) {
     const keywords = cleanKeywords(title, brand);
     const query = encodeURIComponent(keywords);
     const brandQuery = encodeURIComponent(brand || '');
+    const isUk = hostSuffix.includes('.co.uk');
+    const isEu = hostSuffix.includes('.de') || hostSuffix.includes('.fr') || hostSuffix.includes('.it') || hostSuffix.includes('.es');
 
     return [
       {
@@ -42,10 +44,10 @@
       },
       {
         name: 'Google Wholesale',
-        badge: 'US Distributors',
+        badge: isUk ? 'UK Distributors' : isEu ? 'EU Distributors' : 'US Distributors',
         icon: '🌐',
-        url: `https://www.google.com/search?q=${brandQuery}+${query}+wholesale+distributor+supplier+MOQ`,
-        description: 'Find authorized US & global wholesale distributors'
+        url: `https://www.google.com/search?q=${brandQuery}+${query}+wholesale+distributor+supplier+${isUk ? 'UK' : isEu ? 'Europe' : 'USA'}+MOQ`,
+        description: `Find authorized ${isUk ? 'UK' : isEu ? 'European' : 'US'} & global wholesale distributors`
       },
       {
         name: 'AliExpress',
@@ -65,14 +67,14 @@
         name: 'eBay Bulk Lots',
         badge: 'Liquidation',
         icon: '🏷️',
-        url: `https://www.ebay.com/sch/i.html?_nkw=${query}+lot`,
+        url: isUk ? `https://www.ebay.co.uk/sch/i.html?_nkw=${query}+lot` : `https://www.ebay.com/sch/i.html?_nkw=${query}+lot`,
         description: 'Overstock, liquidation lots, and wholesale bundles'
       },
       {
         name: 'Amazon Seller Central',
         badge: 'Check Gating',
         icon: '🔒',
-        url: `https://sellercentral.amazon.com/product-search/search?q=${asin}`,
+        url: `https://sellercentral.${hostSuffix}/product-search/search?q=${asin}`,
         description: 'Confirm live ungating eligibility on your seller account'
       }
     ];

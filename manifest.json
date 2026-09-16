@@ -24,14 +24,28 @@
     "activeTab"
   ],
   "host_permissions": [
-    "*://*.amazon.com/*"
+    "*://*.amazon.com/*",
+    "*://*.amazon.co.uk/*",
+    "*://*.amazon.de/*",
+    "*://*.amazon.fr/*",
+    "*://*.amazon.it/*",
+    "*://*.amazon.es/*",
+    "*://*.amazon.ca/*",
+    "https://api.keepa.com/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "*://*.amazon.com/*"
+        "*://*.amazon.com/*",
+        "*://*.amazon.co.uk/*",
+        "*://*.amazon.de/*",
+        "*://*.amazon.fr/*",
+        "*://*.amazon.it/*",
+        "*://*.amazon.es/*",
+        "*://*.amazon.ca/*"
       ],
       "js": [
+        "shared/marketplaces.js",
         "shared/fba-calculator.js",
         "shared/bsr-estimator.js",
         "shared/restrictions-checker.js",
