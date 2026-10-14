@@ -1,4 +1,4 @@
-# 📦 BLANK FBA SCOUT (v1.5.0)
+# 📦 BLANK FBA SCOUT (v1.5.1)
 
 > **All-in-One Amazon FBA Product Research, Profitability Calculator, AI Deal Confidence Score, Buy Box Rotation Intelligence, and Wholesale Sourcing Extension for Chromium Browsers (Opera GX, Google Chrome, Brave, Edge).**
 

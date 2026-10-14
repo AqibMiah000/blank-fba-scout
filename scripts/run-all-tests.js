@@ -7,7 +7,8 @@ const testScripts = [
   'test-new-modules.js',
   'test-v120.js',
   'test-v130.js',
-  'test-v150.js'
+  'test-v150.js',
+  'test-widget-render.js'
 ];
 
 console.log('==============================================');

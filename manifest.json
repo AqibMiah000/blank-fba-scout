@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BLANK FBA SCOUT",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "All-in-one Amazon FBA product research, profit margins, AI confidence score, sales velocity charts, wholesale sourcing, search page scout, and top 100 wholesale directory.",
   "background": {
     "service_worker": "background.js"

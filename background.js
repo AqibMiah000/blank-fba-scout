@@ -1,5 +1,5 @@
 /**
- * BLANK FBA SCOUT - Background Service Worker v1.5.0
+ * BLANK FBA SCOUT - Background Service Worker v1.5.1
  * Handles dynamic toolbar icon color theming and extension lifecycle
  */
 

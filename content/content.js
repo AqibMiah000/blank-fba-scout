@@ -610,17 +610,20 @@
    */
   function clampAndApplyPosition(container, top, left) {
     if (!container) return null;
-    const vpWidth = window.innerWidth;
-    const vpHeight = window.innerHeight;
-    const rect = container.getBoundingClientRect();
+    const vpWidth = window.innerWidth || (document.documentElement && document.documentElement.clientWidth) || 1280;
+    const vpHeight = window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || 800;
+    const rect = (container.getBoundingClientRect && container.getBoundingClientRect()) || { width: 0, height: 0 };
     const width = rect.width > 0 ? rect.width : (isWidgetExpanded ? 380 : 180);
     const height = rect.height > 0 ? rect.height : (isWidgetExpanded ? 520 : 45);
 
     const maxLeft = Math.max(10, vpWidth - width - 15);
     const maxTop = Math.max(10, vpHeight - height - 15);
 
-    const clampedLeft = Math.round(Math.min(Math.max(10, left), maxLeft));
-    const clampedTop = Math.round(Math.min(Math.max(10, top), maxTop));
+    const safeLeft = (typeof left === 'number' && !isNaN(left)) ? left : 20;
+    const safeTop = (typeof top === 'number' && !isNaN(top)) ? top : 75;
+
+    const clampedLeft = Math.round(Math.min(Math.max(10, safeLeft), maxLeft));
+    const clampedTop = Math.round(Math.min(Math.max(10, safeTop), maxTop));
 
     container.style.top = `${clampedTop}px`;
     container.style.left = `${clampedLeft}px`;
@@ -723,21 +726,24 @@
     if (!data) return;
     currentProductData = data;
 
-    let container = document.getElementById('amz-fba-overlay-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.id = 'amz-fba-overlay-container';
-      document.body.appendChild(container);
-    }
+    const symbol = (currentMarketplace && currentMarketplace.symbol) || '$';
 
-    if (window.ThemeEngine) {
-      window.ThemeEngine.applyTheme(userSettings.theme, container);
-    }
+    try {
+      let container = document.getElementById('amz-fba-overlay-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'amz-fba-overlay-container';
+        document.body.appendChild(container);
+      }
 
-    // Apply saved coordinates if user moved widget
-    if (savedWidgetPosition && savedWidgetPosition.top !== null && savedWidgetPosition.left !== null) {
-      clampAndApplyPosition(container, savedWidgetPosition.top, savedWidgetPosition.left);
-    }
+      if (window.ThemeEngine) {
+        window.ThemeEngine.applyTheme(userSettings.theme, container);
+      }
+
+      // Apply saved coordinates if user moved widget
+      if (savedWidgetPosition && savedWidgetPosition.top !== null && savedWidgetPosition.left !== null && !isNaN(savedWidgetPosition.top) && !isNaN(savedWidgetPosition.left)) {
+        clampAndApplyPosition(container, savedWidgetPosition.top, savedWidgetPosition.left);
+      }
 
     const calc = data.lastCalculation;
     const cs = data.confidenceScore;
@@ -1150,6 +1156,9 @@
       `;
 
       attachEventListeners(data);
+    }
+    } catch (err) {
+      console.error('[Blank FBA Scout] Error rendering widget:', err);
     }
   }
 
