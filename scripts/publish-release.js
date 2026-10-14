@@ -56,15 +56,15 @@ async function main() {
 **The Ultimate All-in-One Amazon FBA Research & Profit Suite (Zero Recurring Subscriptions, 100% Client-Side).**
 
 #### ✨ What's New in ${tagName}:
-- **In-Page Scout Overlay Hotfix**: Resolved an uncaught `ReferenceError: symbol is not defined` in `renderWidget()` that prevented the floating in-page widget and badge from displaying on product detail pages.
+- **In-Page Scout Overlay Hotfix**: Resolved an uncaught \`ReferenceError: symbol is not defined\` in \`renderWidget()\` that prevented the floating in-page widget and badge from displaying on product detail pages.
 - **Robust Viewport Coordinate Clamping**: Added defensive coordinate clamping for saved widget positions to prevent off-screen or NaN placement across multi-monitor setups.
-- **Multi-Marketplace Auto-Detection**: Fully automated support for **Amazon US, UK, Germany, France, Italy, Spain, and Canada** with native currency symbols (`$`, `£`, `€`, `CA$`) and marketplace badges.
+- **Multi-Marketplace Auto-Detection**: Fully automated support for **Amazon US, UK, Germany, France, Italy, Spain, and Canada** with native currency symbols (\`$\`, \`£\`, \`€\`, \`CA$\`) and marketplace badges.
 - **UK & EU VAT Engine**: Automatically accounts for UK 20% & European 19%–22% VAT structures in selling price and net profit calculations.
-- **Zero-Lag Performance Overhaul**: Throttled DOM mutation listeners with `requestIdleCallback` and cached search cards with `:not([data-fba-scouted])`.
-- **1-Click Watchlist CSV Export**: Instant download of all tracked products into an Excel-ready `.csv` file.
+- **Zero-Lag Performance Overhaul**: Throttled DOM mutation listeners with \`requestIdleCallback\` and cached search cards with \`:not([data-fba-scouted])\`.
+- **1-Click Watchlist CSV Export**: Instant download of all tracked products into an Excel-ready \`.csv\` file.
 - **Optional Keepa API Integration**: Toggle in Settings for true 365-day Keepa price & sales rank drops, with instant math engine fallback.
 - **2026 Inbound Placement Fee Support**: Configurable Inbound Placement Fee engine in the FBA calculator.
-- **Buy Box Storefront Link Extraction**: Robust matching of `a[href*="seller="]`, `/sp?`, and `/shops/` to display verified merchant links.
+- **Buy Box Storefront Link Extraction**: Robust matching of \`a[href*="seller="]\`, \`/sp?\`, and \`/shops/\` to display verified merchant links.
 
 #### 📥 Installation:
 1. Download **\`blank-fba-scout-${tagName}.zip\`** below.
